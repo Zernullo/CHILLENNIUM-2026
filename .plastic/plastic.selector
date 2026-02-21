@@ -1,0 +1,4 @@
+repository "Nailong-s Favorite Friends/Nailong-s Favorite Friends@2475793696690@cloud"
+  path "/"
+    br "/main"
+    co "/main"
