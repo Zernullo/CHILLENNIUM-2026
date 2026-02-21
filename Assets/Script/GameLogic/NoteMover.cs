@@ -5,7 +5,7 @@ public class NoteMover : MonoBehaviour
     [HideInInspector] public Transform target;
     [HideInInspector] public float speed = 5f;
 
-    public float destroyPastDistance = 3f;
+    public float destroyPastDistance = 1f;
 
     private Vector3 moveDirection;
     private bool directionSet = false;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class NoteSpawner : MonoBehaviour
 {
@@ -10,13 +11,17 @@ public class NoteSpawner : MonoBehaviour
     [Min(1f)] public float minSpawnInterval = 1f;
     public float maxSpawnInterval = 3f;
 
-    public float noteSpeed = 0.4f;
+    public float noteSpeed = 5f;
 
     [Header("Appearance")]
     public float yOffset = 0.1f;
 
+    [Header("Lanes")]
+    public Transform[] lanes;
+
     private float timer = 0f;
     private float nextSpawnInterval = 1f;
+    private bool paused = false;
 
     private void Start()
     {
@@ -25,6 +30,8 @@ public class NoteSpawner : MonoBehaviour
 
     void Update()
     {
+        if (paused) return;
+
         timer += Time.deltaTime;
         if (timer >= nextSpawnInterval)
         {
@@ -34,6 +41,13 @@ public class NoteSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>Called by SpecialAttack to pause/resume normal spawning.</summary>
+    public void SetPaused(bool value)
+    {
+        paused = value;
+        if (!paused) timer = 0f; // reset timer so we don't get an instant burst on resume
+    }
+
     private void RollNextSpawnInterval()
     {
         float min = Mathf.Max(1f, minSpawnInterval);
@@ -41,51 +55,41 @@ public class NoteSpawner : MonoBehaviour
         nextSpawnInterval = Random.Range(min, max);
     }
 
-    // Lanes for notes (set in inspector or auto-detect)
-    [Header("Lanes")]
-    public Transform[] lanes; // Assign lane positions in inspector
-
     void SpawnNote()
     {
-        // Safety: check lanes array
         if (lanes == null || lanes.Length == 0)
         {
             SpawnSingleNote(spawnPoint.position);
             return;
         }
 
-        // Filter out null lanes
-        System.Collections.Generic.List<Transform> validLanes = new System.Collections.Generic.List<Transform>();
+        List<Transform> validLanes = new List<Transform>();
         foreach (var lane in lanes)
-        {
             if (lane != null) validLanes.Add(lane);
-        }
+
         if (validLanes.Count == 0)
         {
             SpawnSingleNote(spawnPoint.position);
             return;
         }
 
-        int patternType = Random.Range(0, 3); // 0: single, 1: burst, 2: wave
+        int patternType = Random.Range(0, 3);
+
         if (patternType == 0)
         {
-            // Single note in random lane
-            int laneIdx = Random.Range(0, validLanes.Count);
-            SpawnSingleNote(validLanes[laneIdx].position);
+            SpawnSingleNote(validLanes[Random.Range(0, validLanes.Count)].position);
         }
         else if (patternType == 1)
         {
-            // Burst: 2-3 notes in random lanes
             int burstCount = Random.Range(2, Mathf.Min(4, validLanes.Count + 1));
-            System.Collections.Generic.HashSet<int> used = new System.Collections.Generic.HashSet<int>();
+            HashSet<int> used = new HashSet<int>();
             int attempts = 0;
             for (int i = 0; i < burstCount && attempts < 10 * burstCount; i++)
             {
                 int laneIdx;
-                do {
-                    laneIdx = Random.Range(0, validLanes.Count);
-                    attempts++;
-                } while (used.Contains(laneIdx) && attempts < 10 * burstCount);
+                do { laneIdx = Random.Range(0, validLanes.Count); attempts++; }
+                while (used.Contains(laneIdx) && attempts < 10 * burstCount);
+
                 if (!used.Contains(laneIdx))
                 {
                     used.Add(laneIdx);
@@ -95,22 +99,19 @@ public class NoteSpawner : MonoBehaviour
         }
         else
         {
-            // Wave: notes in all lanes
             foreach (var lane in validLanes)
-            {
                 SpawnSingleNote(lane.position);
-            }
         }
     }
 
     void SpawnSingleNote(Vector3 lanePos)
     {
-        // Use lane x, spawnPoint y/z
         Vector3 spawnPos = new Vector3(
             lanePos.x,
             spawnPoint.position.y + yOffset,
             spawnPoint.position.z
         );
+
         GameObject note = Instantiate(notePrefab, spawnPos, Quaternion.identity);
         NoteMover mover = note.GetComponent<NoteMover>();
         if (mover != null)
