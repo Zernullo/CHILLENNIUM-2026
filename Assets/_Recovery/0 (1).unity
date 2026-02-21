@@ -1133,8 +1133,8 @@ MonoBehaviour:
   keyToPress: 19
   scorePerHit: 10
   localScore: 0
-  hitWindowBefore: 0.1
-  hitWindowAfter: 0.1
+  hitWindowBefore: 0.3
+  hitWindowAfter: 0.2
   pulseScale: 1.2
 --- !u!1 &832575517
 GameObject:
@@ -1237,7 +1237,7 @@ MonoBehaviour:
   hitZone: {fileID: 1159944899}
   minSpawnInterval: 1
   maxSpawnInterval: 3
-  noteSpeed: 2
+  noteSpeed: 0.4
   yOffset: 0.1
   lanes:
   - {fileID: 178758078}
@@ -1482,8 +1482,8 @@ MonoBehaviour:
   keyToPress: 31
   scorePerHit: 10
   localScore: 0
-  hitWindowBefore: 0.1
-  hitWindowAfter: 0.1
+  hitWindowBefore: 0.3
+  hitWindowAfter: 0.2
   pulseScale: 1.2
 --- !u!64 &1159944901
 MeshCollider:
@@ -1693,8 +1693,8 @@ MonoBehaviour:
   keyToPress: 32
   scorePerHit: 10
   localScore: 0
-  hitWindowBefore: 0.1
-  hitWindowAfter: 0.1
+  hitWindowBefore: 0.3
+  hitWindowAfter: 0.2
   pulseScale: 1.2
 --- !u!1 &1241583759
 GameObject:
@@ -2139,8 +2139,8 @@ MonoBehaviour:
   keyToPress: 37
   scorePerHit: 10
   localScore: 0
-  hitWindowBefore: 0.1
-  hitWindowAfter: 0.1
+  hitWindowBefore: 0.3
+  hitWindowAfter: 0.2
   pulseScale: 1.2
 --- !u!1 &1944209133
 GameObject:

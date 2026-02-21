@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(Collider))]
 public class HitZone : MonoBehaviour
 {
     [Header("Input")]
@@ -9,100 +10,111 @@ public class HitZone : MonoBehaviour
 
     [Header("Scoring")]
     public int scorePerHit = 10;
-    public int localScore = 0;
+    public int score = 0;
 
     [Header("Timing Window")]
-    public float hitWindowBefore = 0.3f;
-    public float hitWindowAfter = 0.2f;
+    public float maxHitDistance = 0.4f;
 
-    [Header("Visual Feedback")]
-    public float pulseScale = 1.2f;
-    private Vector3 originalScale;
+    [Header("Debug")]
+    public bool debugLogs;
 
-    private HashSet<int> notesHitThisFrame = new HashSet<int>();
+    private static readonly Dictionary<Key, HitZone> keyOwners = new Dictionary<Key, HitZone>();
+    private static readonly Dictionary<Key, int> lastScoredFrameByKey = new Dictionary<Key, int>();
+    private Collider zoneCollider;
 
     private void Awake()
     {
-        originalScale = transform.localScale;
+        zoneCollider = GetComponent<Collider>();
+        zoneCollider.isTrigger = true;
+    }
+
+    private void OnEnable()
+    {
+        if (keyOwners.TryGetValue(keyToPress, out HitZone owner) && owner != null && owner != this)
+        {
+            Debug.LogWarning($"HitZone '{name}' disabled because key {keyToPress} is already used by '{owner.name}'.");
+            enabled = false;
+            return;
+        }
+
+        keyOwners[keyToPress] = this;
+    }
+
+    private void OnDisable()
+    {
+        if (keyOwners.TryGetValue(keyToPress, out HitZone owner) && owner == this)
+        {
+            keyOwners.Remove(keyToPress);
+        }
     }
 
     private void Update()
     {
-        transform.localScale = Vector3.Lerp(transform.localScale, originalScale, Time.deltaTime * 10f);
+        if (Keyboard.current == null)
+            return;
 
-        if (Keyboard.current == null) return;
-        if (Keyboard.current[keyToPress].wasPressedThisFrame)
+        var keyControl = Keyboard.current[keyToPress];
+        if (keyControl == null || !keyControl.wasPressedThisFrame)
+            return;
+
+        if (lastScoredFrameByKey.TryGetValue(keyToPress, out int lastFrame) && lastFrame == Time.frameCount)
+            return;
+
+        NoteMover note = FindNoteInsideZone();
+        if (note == null)
         {
-            ProcessHit();
+            if (debugLogs)
+                Debug.Log($"{name} Miss! {keyToPress}");
+            return;
         }
+
+        if (debugLogs)
+        {
+            Debug.Log($"{name} Hit! {keyToPress} -> {note.name}");
+        }
+
+        Destroy(note.gameObject);
+        score += scorePerHit;
+        lastScoredFrameByKey[keyToPress] = Time.frameCount;
     }
 
-    private void LateUpdate()
+    private NoteMover FindNoteInsideZone()
     {
-        notesHitThisFrame.Clear();
-    }
+        Vector3 center = zoneCollider.bounds.center;
+        Vector3 halfExtents = zoneCollider.bounds.extents;
+        float maxHitDistanceSqr = maxHitDistance * maxHitDistance;
+        Collider[] overlaps = Physics.OverlapBox(
+            center,
+            halfExtents,
+            zoneCollider.transform.rotation,
+            ~0,
+            QueryTriggerInteraction.Collide
+        );
 
-    private void ProcessHit()
-    {
-        NoteMover note = FindNoteInWindow();
-
-        if (note != null)
-        {
-            int noteID = note.gameObject.GetInstanceID();
-            if (notesHitThisFrame.Contains(noteID)) return;
-            notesHitThisFrame.Add(noteID);
-
-            transform.localScale = originalScale * pulseScale;
-            localScore += scorePerHit;
-
-            Debug.Log($"<color=green>Hit!</color> {keyToPress}");
-            Destroy(note.gameObject);
-        }
-        else
-        {
-            Debug.Log($"<color=red>Miss!</color> {keyToPress}");
-        }
-    }
-
-    private NoteMover FindNoteInWindow()
-    {
         NoteMover best = null;
-        float bestDistance = float.MaxValue;
+        float bestSqrDistance = float.MaxValue;
 
-        // Notes now travel through the hit zone center
-        Vector3 center = transform.position;
-
-        NoteMover[] allNotes = Object.FindObjectsByType<NoteMover>(FindObjectsSortMode.None);
-
-        foreach (var mover in allNotes)
+        for (int i = 0; i < overlaps.Length; i++)
         {
-            if (mover == null || !mover.gameObject.activeSelf || mover.target != transform) continue;
+            Collider candidate = overlaps[i];
+            if (candidate == null || candidate == zoneCollider)
+                continue;
 
-            // Use renderer bounds to check if ANY part of the note overlaps the window
-            Renderer rend = mover.GetComponent<Renderer>();
-            if (rend == null) continue;
+            NoteMover mover = candidate.GetComponentInParent<NoteMover>();
+            if (mover == null)
+                continue;
 
-            // Half-extent of the note along the Z (travel) axis
-            float noteHalfExtentZ = rend.bounds.extents.z;
+            if (mover.target != transform)
+                continue;
 
-            // Signed distance from hit zone center to note center along Z
-            float signedDistance = Vector3.Dot(mover.transform.position - center, Vector3.forward);
+            float sqrDistance = (mover.transform.position - transform.position).sqrMagnitude;
+            if (sqrDistance > maxHitDistanceSqr)
+                continue;
 
-            // The note's leading and trailing edges along Z
-            float noteMin = signedDistance - noteHalfExtentZ;
-            float noteMax = signedDistance + noteHalfExtentZ;
-
-            // Hit if any part of the note overlaps [-hitWindowBefore, +hitWindowAfter]
-            bool overlaps = noteMax >= -hitWindowBefore && noteMin <= hitWindowAfter;
-
-            if (overlaps)
+            if (sqrDistance < bestSqrDistance)
             {
-                float absDist = Mathf.Abs(signedDistance);
-                if (absDist < bestDistance)
-                {
-                    best = mover;
-                    bestDistance = absDist;
-                }
+                best = mover;
+                bestSqrDistance = sqrDistance;
             }
         }
 

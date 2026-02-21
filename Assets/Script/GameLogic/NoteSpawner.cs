@@ -41,11 +41,77 @@ public class NoteSpawner : MonoBehaviour
         nextSpawnInterval = Random.Range(min, max);
     }
 
+    // Lanes for notes (set in inspector or auto-detect)
+    [Header("Lanes")]
+    public Transform[] lanes; // Assign lane positions in inspector
+
     void SpawnNote()
     {
-        Vector3 spawnPos = spawnPoint.position + new Vector3(0, yOffset, 0);
-        GameObject note = Instantiate(notePrefab, spawnPos, Quaternion.identity);
+        // Safety: check lanes array
+        if (lanes == null || lanes.Length == 0)
+        {
+            SpawnSingleNote(spawnPoint.position);
+            return;
+        }
 
+        // Filter out null lanes
+        System.Collections.Generic.List<Transform> validLanes = new System.Collections.Generic.List<Transform>();
+        foreach (var lane in lanes)
+        {
+            if (lane != null) validLanes.Add(lane);
+        }
+        if (validLanes.Count == 0)
+        {
+            SpawnSingleNote(spawnPoint.position);
+            return;
+        }
+
+        int patternType = Random.Range(0, 3); // 0: single, 1: burst, 2: wave
+        if (patternType == 0)
+        {
+            // Single note in random lane
+            int laneIdx = Random.Range(0, validLanes.Count);
+            SpawnSingleNote(validLanes[laneIdx].position);
+        }
+        else if (patternType == 1)
+        {
+            // Burst: 2-3 notes in random lanes
+            int burstCount = Random.Range(2, Mathf.Min(4, validLanes.Count + 1));
+            System.Collections.Generic.HashSet<int> used = new System.Collections.Generic.HashSet<int>();
+            int attempts = 0;
+            for (int i = 0; i < burstCount && attempts < 10 * burstCount; i++)
+            {
+                int laneIdx;
+                do {
+                    laneIdx = Random.Range(0, validLanes.Count);
+                    attempts++;
+                } while (used.Contains(laneIdx) && attempts < 10 * burstCount);
+                if (!used.Contains(laneIdx))
+                {
+                    used.Add(laneIdx);
+                    SpawnSingleNote(validLanes[laneIdx].position);
+                }
+            }
+        }
+        else
+        {
+            // Wave: notes in all lanes
+            foreach (var lane in validLanes)
+            {
+                SpawnSingleNote(lane.position);
+            }
+        }
+    }
+
+    void SpawnSingleNote(Vector3 lanePos)
+    {
+        // Use lane x, spawnPoint y/z
+        Vector3 spawnPos = new Vector3(
+            lanePos.x,
+            spawnPoint.position.y + yOffset,
+            spawnPoint.position.z
+        );
+        GameObject note = Instantiate(notePrefab, spawnPos, Quaternion.identity);
         NoteMover mover = note.GetComponent<NoteMover>();
         if (mover != null)
         {
