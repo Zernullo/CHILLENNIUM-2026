@@ -9,16 +9,23 @@ public class HitZoneComboTracker : MonoBehaviour
     public SpecialAttack specialAttack;
     public NoteSpawner[] spawners;
 
+
     private int consecutiveHits = 0;
+    private int consecutivePerfectHits = 0;
 
     public void RegisterHit()
     {
         if (specialAttack.IsSpecialActive) return;
-
         consecutiveHits++;
-        if (consecutiveHits >= specialAttack.consecutiveHitsRequired)
+    }
+
+    public void RegisterPerfectHit()
+    {
+        if (specialAttack.IsSpecialActive) return;
+        consecutivePerfectHits++;
+        if (consecutivePerfectHits >= specialAttack.consecutiveHitsRequired)
         {
-            consecutiveHits = 0;
+            consecutivePerfectHits = 0;
             specialAttack.TriggerSpecial(spawners);
         }
     }
@@ -27,5 +34,6 @@ public class HitZoneComboTracker : MonoBehaviour
     {
         if (specialAttack.IsSpecialActive) return;
         consecutiveHits = 0;
+        consecutivePerfectHits = 0;
     }
 }

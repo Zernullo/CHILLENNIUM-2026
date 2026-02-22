@@ -1562,6 +1562,7 @@ MonoBehaviour:
   maxSpawnInterval: 3
   noteSpeed: 2
   yOffset: 0.1
+  lanes: []
 --- !u!1 &696782136
 GameObject:
   m_ObjectHideFlags: 0
@@ -1637,8 +1638,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 696782136}
   m_CullTransparentMesh: 1
-  lanes:
-  - {fileID: 1150343475}
 --- !u!1 &755672104
 GameObject:
   m_ObjectHideFlags: 0
@@ -1657,7 +1656,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &755672105
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1704,7 +1703,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 70c25b03e49943c438c4931a30bad39b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1856,7 +1855,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitZone
   keyToPress: 19
-  scorePerHit: 10
+  scorePerHit: 1
   score: 0
   hitWindowBefore: 0.3
   hitWindowAfter: 0.2
@@ -2437,7 +2436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitZone
   keyToPress: 31
-  scorePerHit: 10
+  scorePerHit: 1
   score: 0
   hitWindowBefore: 0.3
   hitWindowAfter: 0.2
@@ -2626,7 +2625,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitZone
   keyToPress: 32
-  scorePerHit: 10
+  scorePerHit: 1
   score: 0
   hitWindowBefore: 0.3
   hitWindowAfter: 0.2
@@ -3640,6 +3639,7 @@ MonoBehaviour:
   maxSpawnInterval: 3
   noteSpeed: 2
   yOffset: 0.1
+  lanes: []
 --- !u!1 &1611450088
 GameObject:
   m_ObjectHideFlags: 0
@@ -3866,8 +3866,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614738908}
   m_CullTransparentMesh: 1
-  lanes:
-  - {fileID: 355182152}
 --- !u!1 &1747768945
 GameObject:
   m_ObjectHideFlags: 0
@@ -3973,7 +3971,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitZone
   keyToPress: 37
-  scorePerHit: 10
+  scorePerHit: 1
   score: 0
   hitWindowBefore: 0.3
   hitWindowAfter: 0.2
@@ -4341,6 +4339,7 @@ MonoBehaviour:
   maxSpawnInterval: 3
   noteSpeed: 2
   yOffset: 0.1
+  lanes: []
 --- !u!1 &1954931785
 GameObject:
   m_ObjectHideFlags: 0
@@ -4622,8 +4621,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2071170118}
   m_CullTransparentMesh: 1
-  lanes:
-  - {fileID: 1241583760}
 --- !u!1 &2083027290
 GameObject:
   m_ObjectHideFlags: 0
@@ -4635,6 +4632,7 @@ GameObject:
   - component: {fileID: 2083027293}
   - component: {fileID: 2083027292}
   - component: {fileID: 2083027291}
+  - component: {fileID: 2083027294}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4672,7 +4670,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dd1434014fbfe345994eb086818626c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpecialAttack
-  consecutiveHitsRequired: 10
+  consecutiveHitsRequired: 1
   duration: 15
   speedMultiplier: 2
   intervalDivisor: 2
@@ -4691,6 +4689,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2083027294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083027290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb90b311c9cef734dadf92a52f970a1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InvertKey
+  invert: 1
+  keyToInvert: 31
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

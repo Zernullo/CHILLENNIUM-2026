@@ -66,12 +66,74 @@ public class HitZone : MonoBehaviour
             return;
         }
 
-        if (debugLogs) Debug.Log($"<color=green>Hit!</color> {keyToPress} -> {note.name}");
+        // Check for perfect zone
+        NoteMover perfect = perfectZone();
+        bool isPerfect = (perfect != null && perfect == note);
+
+        if (debugLogs)
+        {
+            if (isPerfect)
+                Debug.Log($"<color=magenta>PERFECT!</color> {keyToPress} -> {note.name}");
+            else
+                Debug.Log($"<color=green>Hit!</color> {keyToPress} -> {note.name}");
+        }
 
         Destroy(note.gameObject);
         score += scorePerHit;
         lastScoredFrameByKey[keyToPress] = Time.frameCount;
-        comboTracker?.RegisterHit();
+        if (isPerfect)
+            comboTracker?.RegisterPerfectHit();
+        else
+            comboTracker?.RegisterHit();
+    }
+    public void UpdateKey(Key newKey)
+    {
+        if (keyOwners.TryGetValue(keyToPress, out HitZone owner) && owner == this)
+            keyOwners.Remove(keyToPress);
+
+        keyToPress = newKey;
+
+        if (!keyOwners.ContainsKey(keyToPress))
+            keyOwners[keyToPress] = this;
+        else
+            Debug.LogWarning($"Key {newKey} already owned by another HitZone!");
+    }
+    private NoteMover perfectZone()
+    {
+        Vector3 center = zoneCollider.bounds.center;
+        Vector3 halfExtents = zoneCollider.bounds.extents;
+
+        Debug.Log($"OverlapBox center: {center}, halfExtents: {halfExtents}");
+
+        Collider[] overlaps = Physics.OverlapBox(
+            center,
+            halfExtents,
+            zoneCollider.transform.rotation,
+            ~0,
+            QueryTriggerInteraction.Collide
+        );
+
+        NoteMover best = null;
+        float bestSqrDistance = float.MaxValue;
+
+        for (int i = 0; i < overlaps.Length; i++)
+        {
+            Collider candidate = overlaps[i];
+            if (candidate == null || candidate == zoneCollider) continue;
+
+            NoteMover mover = candidate.GetComponentInParent<NoteMover>();
+            if (mover == null) continue;
+            if (mover.target != transform) continue;
+
+            float sqrDistance = (mover.transform.position - transform.position).sqrMagnitude;
+            if (sqrDistance < bestSqrDistance)
+            {
+                best = mover;
+                bestSqrDistance = sqrDistance;
+            }
+        }
+
+        return best;
     }
 
     private NoteMover FindNoteInsideZone()

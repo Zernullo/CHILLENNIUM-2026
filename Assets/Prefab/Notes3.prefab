@@ -129,6 +129,7 @@ MonoBehaviour:
   target: {fileID: 0}
   speed: 5
   destroyPastDistance: 1
+  debugLogs: 1
 --- !u!54 &1949532212323839679
 Rigidbody:
   m_ObjectHideFlags: 0

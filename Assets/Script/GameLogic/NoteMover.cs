@@ -10,6 +10,7 @@ public class NoteMover : MonoBehaviour
     private Vector3 moveDirection;
     private bool directionSet = false;
     private Renderer noteRenderer;
+    public bool debugLogs;
 
     void Start()
     {
@@ -49,6 +50,7 @@ public class NoteMover : MonoBehaviour
         if (distancePast >= destroyPastDistance)
         {
             Destroy(gameObject);
+            if (debugLogs) Debug.Log($"<color=red>Miss!</color> Note passed hit zone: {gameObject.name}");
         }
     }
 }
