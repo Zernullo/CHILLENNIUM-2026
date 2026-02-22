@@ -18,6 +18,33 @@ public class InventoryManager : MonoBehaviour
     {
         if (Keyboard.current[Key.P].wasPressedThisFrame)
             OpenChoiceMenu();
+        if (Keyboard.current[Key.U].wasPressedThisFrame)
+            UseSlot(0);
+        if (Keyboard.current[Key.I].wasPressedThisFrame)
+            UseSlot(1);
+        if (Keyboard.current[Key.O].wasPressedThisFrame)
+            UseSlot(2);
+    }
+
+    void UseSlot(int index)
+    {
+        Debug.Log($"UseSlot {index} | BuffManager exists: {BuffManager.Instance != null}");
+        if (index >= slots.Length) return;
+        Transform slot = slots[index];
+        if (slot.childCount == 0)
+        {
+            Debug.Log($"Slot {index} is empty");
+            return;
+        }
+
+        GameObject itemObj = slot.GetChild(0).gameObject;
+        ItemUI itemUI = itemObj.GetComponent<ItemUI>();
+        Debug.Log($"ItemUI: {itemUI != null} | data: {itemUI?.data != null} | buffType: {itemUI?.data?.buffType}");
+
+        if (itemUI == null || itemUI.data == null) return;
+
+        BuffManager.Instance?.ActivateBuff(itemUI.data.buffType);
+        Destroy(itemObj);
     }
 
     public void OpenChoiceMenu()
@@ -28,9 +55,7 @@ public class InventoryManager : MonoBehaviour
         foreach (Transform child in choiceContainer)
             Destroy(child.gameObject);
 
-        // Use a copy of the pool so we can pick unique items
         List<ItemData> pool = new List<ItemData>(itemPool);
-
         for (int i = 0; i < 3 && pool.Count > 0; i++)
         {
             int idx = Random.Range(0, pool.Count);
@@ -53,7 +78,6 @@ public class InventoryManager : MonoBehaviour
     {
         Transform targetSlot = null;
 
-        // Find first empty slot
         foreach (Transform slot in slots)
         {
             if (slot.childCount == 0)
@@ -63,7 +87,6 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        // No empty slot — shift items left and use last slot
         if (targetSlot == null)
         {
             if (slots[0].childCount > 0)
@@ -78,13 +101,13 @@ public class InventoryManager : MonoBehaviour
                     item.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
                 }
             }
-
             targetSlot = slots[slots.Length - 1];
         }
 
         GameObject newItem = Instantiate(itemPrefab, targetSlot);
         newItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
         newItem.GetComponent<Image>().sprite = data.itemIcon;
+        newItem.GetComponent<ItemUI>().data = data;
     }
 
     public void CloseChoiceMenu()

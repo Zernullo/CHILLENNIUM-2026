@@ -16,3 +16,4 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: f33bf319bec1c1b43ba52540eacd4fb7, type: 3}
   itemDescription: Don't mistaken this cloak with the invisibility cloak! Become
     immune to misses for 5 seconds. Cooldown is 40 seconds per use.
+  buffType: 5
