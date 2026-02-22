@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Nailong's Favorite Friends.slnx"
+    "dotnet.defaultSolution": "CHILLENNIUM-2026.slnx"
 }
