@@ -34,9 +34,11 @@ public class BossAnimController : MonoBehaviour
     {
         int randomAttack = Random.Range(1, 5); // picks 1, 2, 3, or 4
         animator.SetTrigger("Attack" + randomAttack);
+        Health.Instance?.DamagePlayer(20);
     }
     private void TriggerSpecialAttack()
     {
         animator.SetTrigger("SpecialAttack");
+        Health.Instance?.DamagePlayer(50);
     }
 }

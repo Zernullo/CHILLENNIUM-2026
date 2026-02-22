@@ -26,5 +26,6 @@ public class CharacterAnimationController : MonoBehaviour
     public void TriggerSpecialAttackAnim()
     {
         animator.SetTrigger("SpecialAttack");
+        Health.Instance?.DamageBoss(50);
     }
 }
