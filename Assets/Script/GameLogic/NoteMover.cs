@@ -51,7 +51,14 @@ public class NoteMover : MonoBehaviour
             noteRenderer.material.color = new Color(c.r, c.g, c.b, alpha);
         }
 
-        if (distancePast >= destroyPastDistance)
-            Destroy(gameObject);
+        if (distancePast >= destroyPastDistance){
+            HitZone hitZone = target?.GetComponentInParent<HitZone>();
+            if (hitZone == null)
+                hitZone = target?.GetComponent<HitZone>();            
+                hitZone?.comboTracker?.RegisterMiss();
+                BossAnimController.Instance?.OnPlayerMiss();
+                Destroy(gameObject);
+                Health.Instance?.DamagePlayer(20);
+        }
     }
 }
