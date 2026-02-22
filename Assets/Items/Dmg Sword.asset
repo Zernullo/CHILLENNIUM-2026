@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemName: Sword
   itemIcon: {fileID: 21300000, guid: b6f828067a190ab46afadab846abb0d0, type: 3}
+  itemDescription: Does this sword increase your aura? Deals an additional 10% of
+    your next attack on the boss. Cooldown is 15 seconds per use.

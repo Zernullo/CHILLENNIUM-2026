@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemName: Potion
   itemIcon: {fileID: 21300000, guid: 281a3a7bc0f287f45a4ccea11d1bf65f, type: 3}
+  itemDescription: Unfortunately, NOT a love potion! Heal 1 hp consecutively over
+    10 seconds. Cooldown is 30 seconds per use.
