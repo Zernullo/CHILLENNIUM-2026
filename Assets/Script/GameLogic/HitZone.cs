@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using TMPro;
 
 [RequireComponent(typeof(Collider))]
 public class HitZone : MonoBehaviour
@@ -21,6 +22,12 @@ public class HitZone : MonoBehaviour
 
     [Header("Debug")]
     public bool debugLogs;
+
+    [Header("Key Management")]
+    public TextMeshPro currentKey = null;
+
+    public static Transform warningInvertPanel;
+    public static TextMeshProUGUI warningText;
 
     private static readonly Dictionary<Key, HitZone> keyOwners = new Dictionary<Key, HitZone>();
     private static readonly Dictionary<Key, int> lastScoredFrameByKey = new Dictionary<Key, int>();
@@ -50,6 +57,7 @@ public class HitZone : MonoBehaviour
 
     private void Update()
     {
+        if (currentKey != null) currentKey.text = keyToPress.ToString();
         if (Keyboard.current == null) return;
 
         var keyControl = Keyboard.current[keyToPress];
@@ -66,12 +74,74 @@ public class HitZone : MonoBehaviour
             return;
         }
 
-        if (debugLogs) Debug.Log($"<color=green>Hit!</color> {keyToPress} -> {note.name}");
+        NoteMover perfect = PerfectZone();
+        bool isPerfect = (perfect != null && perfect == note);
+
+        if (debugLogs)
+        {
+            if (isPerfect)
+                Debug.Log($"<color=magenta>PERFECT!</color> {keyToPress} -> {note.name}");
+            else
+                Debug.Log($"<color=green>Hit!</color> {keyToPress} -> {note.name}");
+        }
 
         Destroy(note.gameObject);
         score += scorePerHit;
         lastScoredFrameByKey[keyToPress] = Time.frameCount;
-        comboTracker?.RegisterHit();
+
+        if (isPerfect)
+            comboTracker?.RegisterPerfectHit();
+        else
+            comboTracker?.RegisterHit();
+    }
+
+    public void UpdateKey(Key newKey)
+    {
+        if (keyOwners.TryGetValue(keyToPress, out HitZone owner) && owner == this)
+            keyOwners.Remove(keyToPress);
+
+        keyToPress = newKey;
+
+        if (!keyOwners.ContainsKey(keyToPress))
+            keyOwners[keyToPress] = this;
+        else
+            Debug.LogWarning($"Key {newKey} already owned by another HitZone!");
+    }
+
+    private NoteMover PerfectZone()
+    {
+        Vector3 center = zoneCollider.bounds.center;
+        Vector3 halfExtents = zoneCollider.bounds.extents;
+
+        Collider[] overlaps = Physics.OverlapBox(
+            center,
+            halfExtents,
+            zoneCollider.transform.rotation,
+            ~0,
+            QueryTriggerInteraction.Collide
+        );
+
+        NoteMover best = null;
+        float bestSqrDistance = float.MaxValue;
+
+        for (int i = 0; i < overlaps.Length; i++)
+        {
+            Collider candidate = overlaps[i];
+            if (candidate == null || candidate == zoneCollider) continue;
+
+            NoteMover mover = candidate.GetComponentInParent<NoteMover>();
+            if (mover == null) continue;
+            if (mover.target != transform) continue;
+
+            float sqrDistance = (mover.transform.position - transform.position).sqrMagnitude;
+            if (sqrDistance < bestSqrDistance)
+            {
+                best = mover;
+                bestSqrDistance = sqrDistance;
+            }
+        }
+
+        return best;
     }
 
     private NoteMover FindNoteInsideZone()
@@ -90,9 +160,7 @@ public class HitZone : MonoBehaviour
             if (rend == null) continue;
 
             float noteHalfExtentZ = rend.bounds.extents.z;
-
             float signedDistance = Vector3.Dot(mover.transform.position - center, Vector3.forward);
-
             float noteMin = signedDistance - noteHalfExtentZ;
             float noteMax = signedDistance + noteHalfExtentZ;
 

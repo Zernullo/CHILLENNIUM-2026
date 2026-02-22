@@ -5,10 +5,11 @@ public class NoteMover : MonoBehaviour
     [HideInInspector] public Transform target;
     [HideInInspector] public float speed = 5f;
 
-    public float destroyPastDistance = 1f;
+    public float destroyPastDistance = 5f;
 
     private Vector3 moveDirection;
     private bool directionSet = false;
+    private bool missRegistered = false;
     private Renderer noteRenderer;
 
     void Start()
@@ -22,33 +23,36 @@ public class NoteMover : MonoBehaviour
 
         if (!directionSet)
         {
-            // Target the CENTER of the hit zone — note passes through it (half above, half below)
             moveDirection = (target.position - transform.position).normalized;
             directionSet = true;
         }
 
         transform.position += moveDirection * speed * Time.deltaTime;
 
-        // Distance past the hit zone measured along movement direction
         float distancePast = Vector3.Dot(
             transform.position - target.position,
             moveDirection
         );
 
-        if (distancePast > 0)
+        if (distancePast > 0f && !missRegistered)
         {
-            // Fade out after passing
-            if (noteRenderer != null)
+            missRegistered = true;
+            HitZone hz = target.GetComponent<HitZone>();
+            if (hz != null)
             {
-                float alpha = Mathf.Lerp(1f, 0f, distancePast / destroyPastDistance);
-                Color c = noteRenderer.material.color;
-                noteRenderer.material.color = new Color(c.r, c.g, c.b, alpha);
+                hz.comboTracker?.RegisterMiss();
+                Debug.Log($"<color=red>Missed note!</color> passed {target.name}");
             }
         }
 
-        if (distancePast >= destroyPastDistance)
+        if (distancePast > 0f && noteRenderer != null)
         {
-            Destroy(gameObject);
+            float alpha = Mathf.Lerp(1f, 0f, distancePast / destroyPastDistance);
+            Color c = noteRenderer.material.color;
+            noteRenderer.material.color = new Color(c.r, c.g, c.b, alpha);
         }
+
+        if (distancePast >= destroyPastDistance)
+            Destroy(gameObject);
     }
 }
