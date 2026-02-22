@@ -42,9 +42,10 @@ public class NoteMover : MonoBehaviour
             HitZone hz = target.GetComponent<HitZone>();
             if (hz != null)
             {
-                hz.comboTracker?.RegisterMiss();
                 Debug.Log($"<color=red>Missed note!</color> passed {target.name}");
             }
+            ComboCounter.Instance?.ResetCombo();
+            PerfectComboCounter.Instance?.ResetPerfectCombo();    // ← add this
             Health.Instance?.DamagePlayer(20);
             BossAnimController.Instance?.OnPlayerMiss();
         }

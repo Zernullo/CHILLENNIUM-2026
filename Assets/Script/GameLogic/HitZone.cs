@@ -17,8 +17,6 @@ public class HitZone : MonoBehaviour
     public float hitWindowBefore = 0.3f;
     public float hitWindowAfter = 0.2f;
 
-    [Header("Special Attack")]
-    public HitZoneComboTracker comboTracker;
 
     [Header("Debug")]
     public bool debugLogs;
@@ -70,7 +68,6 @@ public class HitZone : MonoBehaviour
         if (note == null)
         {
             if (debugLogs) Debug.Log($"<color=red>Miss!</color> {keyToPress}");
-            comboTracker?.RegisterMiss();
             return;
         }
 
@@ -87,12 +84,18 @@ public class HitZone : MonoBehaviour
 
         Destroy(note.gameObject);
         score += scorePerHit;
+        ComboCounter.Instance?.RegisterHit();
+        if (isPerfect)
+        {
+            PerfectComboCounter.Instance?.RegisterPerfectHit();   // ← perfect streak continues
+        }
+        else
+        {
+            PerfectComboCounter.Instance?.ResetPerfectCombo();    // ← normal hit breaks perfect streak
+        }
         lastScoredFrameByKey[keyToPress] = Time.frameCount;
         Health.Instance?.DamageBoss(RoundManager.Instance?.GetBossDamage() ?? 20);
-        if (isPerfect)
-            comboTracker?.RegisterPerfectHit();
-        else
-            comboTracker?.RegisterHit();
+
     }
 
     public void UpdateKey(Key newKey)
