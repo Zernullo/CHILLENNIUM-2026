@@ -394,6 +394,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMneu
   audioMixer: {fileID: 0}
+  crossfadeDuration: 1.5
 --- !u!224 &236068513
 RectTransform:
   m_ObjectHideFlags: 0
@@ -985,6 +986,8 @@ MonoBehaviour:
   tracks:
   - trackName: MainMenu
     clip: {fileID: 8300000, guid: a0025a51f64b74984bf96c118f547ed3, type: 3}
+  - trackName: Battle2
+    clip: {fileID: 8300000, guid: e7d35a4978d624398ab73e14c39aabf7, type: 3}
 --- !u!4 &749887441
 Transform:
   m_ObjectHideFlags: 0
@@ -2281,6 +2284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMneu
   audioMixer: {fileID: 24100000, guid: 986db89ebce864062a30048fdb237d81, type: 2}
+  crossfadeDuration: 1.5
 --- !u!224 &1392864553 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 669150001522069989, guid: 2b24eb7adfd594b44b8cfd197bc320bf, type: 3}
