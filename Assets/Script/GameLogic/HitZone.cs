@@ -72,6 +72,7 @@ public class HitZone : MonoBehaviour
         Destroy(note.gameObject);
         score += scorePerHit;
         lastScoredFrameByKey[keyToPress] = Time.frameCount;
+        Health.Instance?.DamageBoss(20);
         comboTracker?.RegisterHit();
     }
 

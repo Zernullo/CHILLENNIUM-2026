@@ -55,6 +55,7 @@ public class NoteMover : MonoBehaviour
                 hitZone?.comboTracker?.RegisterMiss();
                 BossAnimController.Instance?.OnPlayerMiss();
                 Destroy(gameObject);
+                Health.Instance?.DamagePlayer(20);
         }
 
     }
