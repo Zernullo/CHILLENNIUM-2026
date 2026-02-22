@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9766ab92343a39543bfe715a4f79c218
+guid: ffc4eecd209c7c44f9f215610d3b90d9
 AudioImporter:
   externalObjects: {}
   serializedVersion: 8
@@ -8,7 +8,7 @@ AudioImporter:
     loadType: 0
     sampleRateSetting: 0
     sampleRateOverride: 44100
-    compressionFormat: 1
+    compressionFormat: 0
     quality: 1
     conversionMode: 0
     preloadAudioData: 0
@@ -21,3 +21,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325670
+  packageName: Basic RPG Sounds
+  packageVersion: 1.0
+  assetPath: Assets/Multiple Solutions/Basic RPG Sounds/Audio/Phone Booth Dial 6.wav
+  uploadId: 770426

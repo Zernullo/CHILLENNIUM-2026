@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 19766ff8e2813c5429a262daa228f133
+guid: d99ffeeb5ff426344b565b6f657023d5
 AudioImporter:
   externalObjects: {}
   serializedVersion: 8
@@ -8,7 +8,7 @@ AudioImporter:
     loadType: 0
     sampleRateSetting: 0
     sampleRateOverride: 44100
-    compressionFormat: 1
+    compressionFormat: 0
     quality: 1
     conversionMode: 0
     preloadAudioData: 0
@@ -21,3 +21,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 325670
+  packageName: Basic RPG Sounds
+  packageVersion: 1.0
+  assetPath: Assets/Multiple Solutions/Basic RPG Sounds/Audio/Pistol Revolver 2.wav
+  uploadId: 770426
