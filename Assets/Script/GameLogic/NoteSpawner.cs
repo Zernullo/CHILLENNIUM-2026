@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class NoteSpawner : MonoBehaviour
 {
@@ -18,6 +19,42 @@ public class NoteSpawner : MonoBehaviour
 
     [Header("Lanes")]
     public Transform[] lanes;
+
+    [Header("Speed Up Settings")]
+public float SpeedupMultiplier = 1.5f;
+public float SpeedupDuration = 2.0f;
+public float currentSpeedMultiplier = 1f; 
+
+ [Header("Slow Down Settings")]
+public float SlowdownMultiplier = 0.5f;
+public float SlowdownDuration = 2.0f;
+
+
+public void ActivateSpeedUp()
+{
+    StopCoroutine(nameof(SpeedUpRoutine));
+    StartCoroutine(nameof(SpeedUpRoutine));
+}
+
+private System.Collections.IEnumerator SpeedUpRoutine()
+{
+    currentSpeedMultiplier = SpeedupMultiplier;
+    yield return new WaitForSeconds(SpeedupDuration);
+    currentSpeedMultiplier = 1f;
+}
+
+public void ActivateSlowDown()
+{
+    StopCoroutine(nameof(SlowDownRoutine));
+    StartCoroutine(nameof(SlowDownRoutine));
+}
+
+private System.Collections.IEnumerator SlowDownRoutine()
+{
+    currentSpeedMultiplier = SlowdownMultiplier;
+    yield return new WaitForSeconds(SlowdownDuration);
+    currentSpeedMultiplier = 1f;
+}
 
     private float timer = 0f;
     private float nextSpawnInterval = 1f;
@@ -106,18 +143,16 @@ public class NoteSpawner : MonoBehaviour
 
     void SpawnSingleNote(Vector3 lanePos)
     {
-        Vector3 spawnPos = new Vector3(
-            lanePos.x,
-            spawnPoint.position.y + yOffset,
-            spawnPoint.position.z
-        );
+        Vector3 spawnPos = new Vector3(lanePos.x, spawnPoint.position.y + yOffset, spawnPoint.position.z);
+    GameObject note = Instantiate(notePrefab, spawnPos, Quaternion.identity);
+    NoteMover mover = note.GetComponent<NoteMover>();
 
-        GameObject note = Instantiate(notePrefab, spawnPos, Quaternion.identity);
-        NoteMover mover = note.GetComponent<NoteMover>();
-        if (mover != null)
-        {
-            mover.target = hitZone;
-            mover.speed = noteSpeed;
-        }
+    if (mover != null)
+    {
+        // Instead of the general hitZone, give it the lane's specific X position
+        // so it moves straight down the lane.
+        mover.targetPosition = new Vector3(lanePos.x, hitZone.position.y, hitZone.position.z);
+        mover.speed = noteSpeed;
+    }
     }
 }

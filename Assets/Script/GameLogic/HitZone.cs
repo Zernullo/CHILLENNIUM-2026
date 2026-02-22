@@ -84,7 +84,8 @@ public class HitZone : MonoBehaviour
 
         foreach (var mover in allNotes)
         {
-            if (mover == null || !mover.gameObject.activeSelf || mover.target != transform) continue;
+// Use .targetPosition and compare it to transform.position
+if (mover == null || !mover.gameObject.activeSelf || mover.targetPosition != transform.position) continue;
 
             Renderer rend = mover.GetComponent<Renderer>();
             if (rend == null) continue;

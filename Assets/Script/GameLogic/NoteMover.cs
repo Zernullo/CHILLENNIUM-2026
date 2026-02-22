@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class NoteMover : MonoBehaviour
 {
-    [HideInInspector] public Transform target;
+    // 1. Change this from Transform to Vector3 to match the Spawner's new logic
+    [HideInInspector] public Vector3 targetPosition; 
     [HideInInspector] public float speed = 5f;
 
     public float destroyPastDistance = 1f;
@@ -10,34 +11,44 @@ public class NoteMover : MonoBehaviour
     private Vector3 moveDirection;
     private bool directionSet = false;
     private Renderer noteRenderer;
+    
+    private NoteSpawner spawner;
 
     void Start()
     {
         noteRenderer = GetComponent<Renderer>();
+        spawner = Object.FindFirstObjectByType<NoteSpawner>();
     }
 
     void Update()
     {
-        if (target == null) return;
-
+        // 2. Updated check for the Vector3 target
+        // Since Vector3 is a value type, we check if it's set or if we've reached it
         if (!directionSet)
         {
-            // Target the CENTER of the hit zone — note passes through it (half above, half below)
-            moveDirection = (target.position - transform.position).normalized;
-            directionSet = true;
+            // Calculate direction toward the specific lane coordinate
+            Vector3 heading = targetPosition - transform.position;
+            if (heading.sqrMagnitude > 0.001f)
+            {
+                moveDirection = heading.normalized;
+                directionSet = true;
+            }
+            return; // Wait for direction to be set before moving
         }
 
-        transform.position += moveDirection * speed * Time.deltaTime;
+        float multiplier = (spawner != null) ? spawner.currentSpeedMultiplier : 1f;
+        float effectiveSpeed = speed * multiplier;
 
-        // Distance past the hit zone measured along movement direction
+        transform.position += moveDirection * effectiveSpeed * Time.deltaTime;
+
+        // 3. Distance check now uses targetPosition instead of target.position
         float distancePast = Vector3.Dot(
-            transform.position - target.position,
+            transform.position - targetPosition,
             moveDirection
         );
 
         if (distancePast > 0)
         {
-            // Fade out after passing
             if (noteRenderer != null)
             {
                 float alpha = Mathf.Lerp(1f, 0f, distancePast / destroyPastDistance);
