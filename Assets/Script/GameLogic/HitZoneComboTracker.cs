@@ -16,7 +16,6 @@ public class HitZoneComboTracker : MonoBehaviour
 
     public void RegisterHit()
     {
-        winLoseCondition?.OnHit();
         if (specialAttack.IsSpecialActive) return;
         consecutiveHits++;
         UpdateComboText();
@@ -26,11 +25,11 @@ public class HitZoneComboTracker : MonoBehaviour
             UpdateComboText();
             specialAttack.TriggerSpecial(spawners);
         }
+        winLoseCondition?.OnHit();
     }
 
     public void RegisterPerfectHit()
     {
-        winLoseCondition?.OnHit();
         if (specialAttack.IsSpecialActive) return;
         consecutiveHits += 2;
         UpdateComboText();
@@ -41,14 +40,15 @@ public class HitZoneComboTracker : MonoBehaviour
             specialAttack.TriggerSpecial(spawners);
             CharacterAnimationController.Instance?.TriggerSpecialAttackAnim();
         }
+        winLoseCondition?.OnHit();
     }
 
     public void RegisterMiss()
     {
-        winLoseCondition?.OnMiss();
         if (specialAttack.IsSpecialActive) return;
         consecutiveHits = 0;
         UpdateComboText();
+        winLoseCondition?.OnMiss();
     }
 
     private void UpdateComboText()

@@ -6,13 +6,12 @@ public class WinLoseCondition : MonoBehaviour
     [Header("References")]
     public Health health;
 
-    [Header("Scenes")]
-    public string winScene = "WinScene";
-    public string loseScene = "LoseScene";
+    [Header("Panels")]
+    public GameObject winPanel;
+    public GameObject losePanel;
 
-    [Header("Settings")]
-    public int damagePerMiss = 10;
-    public int damagePerHit = 10;
+    [Header("Scenes")]
+    public string mainMenuScene = "MainMenu";
 
     public static WinLoseCondition Instance;
 
@@ -21,6 +20,8 @@ public class WinLoseCondition : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        if (winPanel != null) winPanel.SetActive(false);
+        if (losePanel != null) losePanel.SetActive(false);
     }
 
     private void Update()
@@ -30,27 +31,56 @@ public class WinLoseCondition : MonoBehaviour
         if (health.playerCurrentHealth <= 0)
         {
             gameOver = true;
+            Time.timeScale = 0;
             Debug.Log("<color=red>Player Lost!</color>");
-            SceneManager.LoadScene(loseScene);
+            if (losePanel != null) losePanel.SetActive(true);
         }
 
         if (health.bossCurrentHealth <= 0)
         {
             gameOver = true;
+            Time.timeScale = 0;
             Debug.Log("<color=green>Player Won!</color>");
-            SceneManager.LoadScene(winScene);
+            if (winPanel != null) winPanel.SetActive(true);
         }
     }
 
-    public void OnMiss()
+    public void ResetRound()
     {
-        if (gameOver) return;
-        health.DamagePlayer(damagePerMiss);
+        gameOver = false;
+        if (winPanel != null) winPanel.SetActive(false);
+        if (losePanel != null) losePanel.SetActive(false);
+    }
+
+    public void OnNextButton()
+    {
+        Time.timeScale = 1;
+        winPanel.SetActive(false);
+        RoundManager.Instance?.OnRoundWon();
+    }
+
+    public void OnQuitButton()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(mainMenuScene);
+    }
+
+    public void OnRetryButton()
+    {
+        Time.timeScale = 1;
+        losePanel.SetActive(false);
+        RoundManager.Instance?.ResetForNewRound();
     }
 
     public void OnHit()
     {
         if (gameOver) return;
-        health.DamageBoss(damagePerHit);
+        health.DamageBoss(RoundManager.Instance?.GetBossDamage() ?? 20);
+    }
+
+    public void OnMiss()
+    {
+        if (gameOver) return;
+        health.DamagePlayer(20);
     }
 }

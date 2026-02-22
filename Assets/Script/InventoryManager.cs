@@ -45,6 +45,7 @@ public class InventoryManager : MonoBehaviour
             {
                 AddItemToInventory(localData);
                 CloseChoiceMenu();
+                RoundManager.Instance?.OnShopClosed();
             });
         }
     }
