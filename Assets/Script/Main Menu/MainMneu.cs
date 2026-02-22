@@ -4,13 +4,18 @@ using UnityEngine.Audio;
 public class MainMneu : MonoBehaviour
 {
     public AudioMixer audioMixer;
+    public float crossfadeDuration = 1.5f;
     public void Start()
     {
         MusicManager.Instance.PlayMusic("MainMenu");
     }
     public void Play()
     {
+        
+    MusicManager.Instance.CrossfadeTo("Battle2", crossfadeDuration, () =>
+    {
         SceneManager.LoadScene("Game");
+    });
     }
     public void Quit()
     {

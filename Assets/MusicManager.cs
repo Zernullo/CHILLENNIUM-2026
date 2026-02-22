@@ -1,10 +1,20 @@
 using System.Collections;
 using UnityEngine;
+using System;
  
 public class MusicManager : MonoBehaviour
 {
     public static MusicManager Instance;
- 
+    public void CrossfadeTo(string trackName, float fadeDuration, Action onComplete = null)
+{
+    StartCoroutine(CrossfadeAndThen(trackName, fadeDuration, onComplete));
+}
+
+private IEnumerator CrossfadeAndThen(string trackName, float fadeDuration, Action onComplete)
+{
+    yield return StartCoroutine(AnimateMusicCrossfade(musicLibrary.GetClipFromName(trackName), fadeDuration));
+    onComplete?.Invoke();
+}
     [SerializeField]
     private MusicLibrary musicLibrary;
     [SerializeField]
