@@ -63,6 +63,7 @@ public class HitZone : MonoBehaviour
         {
             if (debugLogs) Debug.Log($"<color=red>Miss!</color> {keyToPress}");
             comboTracker?.RegisterMiss();
+            BossAnimController.Instance?.OnPlayerMiss();
             return;
         }
 
