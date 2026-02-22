@@ -48,7 +48,14 @@ public class NoteMover : MonoBehaviour
 
         if (distancePast >= destroyPastDistance)
         {
-            Destroy(gameObject);
+            // Search target and its parents for HitZone component
+            HitZone hitZone = target?.GetComponentInParent<HitZone>();
+            if (hitZone == null)
+                hitZone = target?.GetComponent<HitZone>();            
+                hitZone?.comboTracker?.RegisterMiss();
+                BossAnimController.Instance?.OnPlayerMiss();
+                Destroy(gameObject);
         }
+
     }
 }
