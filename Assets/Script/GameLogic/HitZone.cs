@@ -88,7 +88,7 @@ public class HitZone : MonoBehaviour
         Destroy(note.gameObject);
         score += scorePerHit;
         lastScoredFrameByKey[keyToPress] = Time.frameCount;
-        Health.Instance?.DamageBoss(20);
+        Health.Instance?.DamageBoss(RoundManager.Instance?.GetBossDamage() ?? 20);
         if (isPerfect)
             comboTracker?.RegisterPerfectHit();
         else

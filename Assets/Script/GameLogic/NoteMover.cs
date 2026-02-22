@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class NoteMover : MonoBehaviour
 {
     [HideInInspector] public Transform target;
@@ -10,7 +11,7 @@ public class NoteMover : MonoBehaviour
     private bool missRegistered = false;
     private Renderer noteRenderer;
 
-    public static float SpeedMultiplier = 1f; // <-- ADD THIS
+    public static float SpeedMultiplier = 1f;
 
     void Start()
     {
@@ -20,19 +21,21 @@ public class NoteMover : MonoBehaviour
     void Update()
     {
         if (target == null) return;
+
         if (!directionSet)
         {
             moveDirection = (target.position - transform.position).normalized;
             directionSet = true;
         }
 
-        transform.position += moveDirection * speed * SpeedMultiplier * Time.deltaTime; // <-- MODIFIED
+        transform.position += moveDirection * speed * SpeedMultiplier * Time.deltaTime;
 
         float distancePast = Vector3.Dot(
             transform.position - target.position,
             moveDirection
         );
 
+        // Register miss and damage player ONCE when note passes
         if (distancePast > 0f && !missRegistered)
         {
             missRegistered = true;
@@ -42,8 +45,11 @@ public class NoteMover : MonoBehaviour
                 hz.comboTracker?.RegisterMiss();
                 Debug.Log($"<color=red>Missed note!</color> passed {target.name}");
             }
+            Health.Instance?.DamagePlayer(20);
+            BossAnimController.Instance?.OnPlayerMiss();
         }
 
+        // Fade out after passing
         if (distancePast > 0f && noteRenderer != null)
         {
             float alpha = Mathf.Lerp(1f, 0f, distancePast / destroyPastDistance);
@@ -51,14 +57,7 @@ public class NoteMover : MonoBehaviour
             noteRenderer.material.color = new Color(c.r, c.g, c.b, alpha);
         }
 
-        if (distancePast >= destroyPastDistance){
-            HitZone hitZone = target?.GetComponentInParent<HitZone>();
-            if (hitZone == null)
-                hitZone = target?.GetComponent<HitZone>();            
-                hitZone?.comboTracker?.RegisterMiss();
-                BossAnimController.Instance?.OnPlayerMiss();
-                Destroy(gameObject);
-                Health.Instance?.DamagePlayer(20);
-        }
+        if (distancePast >= destroyPastDistance)
+            Destroy(gameObject);
     }
 }

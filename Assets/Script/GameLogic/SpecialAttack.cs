@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using TMPro;
 
 public class SpecialAttack : MonoBehaviour
 {
@@ -10,6 +12,7 @@ public class SpecialAttack : MonoBehaviour
     public float duration = 15f;
     public float speedMultiplier = 2f;
     public float intervalDivisor = 2f;
+    public TextMeshProUGUI specialAttackText;
 
     private bool isSpecialActive = false;
     public bool IsSpecialActive => isSpecialActive;
@@ -24,6 +27,13 @@ public class SpecialAttack : MonoBehaviour
     {
         isSpecialActive = true;
         Debug.Log("<color=yellow>⚡ SPECIAL ATTACK INCOMING</color>");
+
+        // Show special attack text
+        if (specialAttackText != null)
+        {
+            specialAttackText.text = "SPECIAL ATTACK!";
+            specialAttackText.gameObject.SetActive(true);
+        }
 
         // Pause all normal spawners immediately
         foreach (var s in spawners)
@@ -79,5 +89,11 @@ public class SpecialAttack : MonoBehaviour
 
         isSpecialActive = false;
         Debug.Log("<color=cyan>⚡ SPECIAL ATTACK END — Back to normal</color>");
+
+        // Hide special attack text
+        if (specialAttackText != null)
+        {
+            specialAttackText.gameObject.SetActive(false);
+        }
     }
 }
