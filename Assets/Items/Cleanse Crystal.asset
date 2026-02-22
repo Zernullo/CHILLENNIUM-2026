@@ -16,3 +16,4 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: 52d23625c5fa9ce4aacc2c57e2a5c507, type: 3}
   itemDescription: This gem can help you survive longer than Gojo! Cleanse all status
     debuff on you. Cooldown is 35 seconds per use.
+  buffType: 4

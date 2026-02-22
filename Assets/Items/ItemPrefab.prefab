@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 832766856917200788}
   - component: {fileID: 2710756031422657043}
   - component: {fileID: 7703419684606583205}
+  - component: {fileID: 5465688082911188987}
   m_Layer: 5
   m_Name: ItemPrefab
   m_TagString: Untagged
@@ -75,3 +76,16 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5465688082911188987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9012516901808509932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9178d50ed746846d4a8d734b61191545, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemUI
+  data: {fileID: 0}

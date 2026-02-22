@@ -1,2 +1,15 @@
 fileFormatVersion: 2
 guid: b8529b34dc3e61e45bc50e887650951d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - itemPrefab: {instanceID: 0}
+  - choicePanel: {instanceID: 0}
+  - choiceContainer: {instanceID: 0}
+  - choiceCardPrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
