@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using TMPro;
 
 [RequireComponent(typeof(Collider))]
 public class HitZone : MonoBehaviour
@@ -21,6 +22,13 @@ public class HitZone : MonoBehaviour
 
     [Header("Debug")]
     public bool debugLogs;
+
+    [Header("Key Management")]
+    public TextMeshPro currentKey = null;
+
+    // ==== Static/shared state ====
+    public static Transform warningInvertPanel;
+    public static TextMeshProUGUI warningText; // Change type to TextMeshProUGUI
 
     private static readonly Dictionary<Key, HitZone> keyOwners = new Dictionary<Key, HitZone>();
     private static readonly Dictionary<Key, int> lastScoredFrameByKey = new Dictionary<Key, int>();
@@ -50,6 +58,8 @@ public class HitZone : MonoBehaviour
 
     private void Update()
     {
+        // Update key label
+        if (currentKey != null) currentKey.text = keyToPress.ToString();
         if (Keyboard.current == null) return;
 
         var keyControl = Keyboard.current[keyToPress];
