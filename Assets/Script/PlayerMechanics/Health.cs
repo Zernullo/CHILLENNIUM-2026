@@ -9,7 +9,7 @@ public class Health : MonoBehaviour
     public Slider playerHealthSlider;
 
     [Header("Boss's Health")]
-    public int bossMaxHealth = 2000;
+    public int bossMaxHealth = 1000;
     public int bossCurrentHealth;
     public Slider bossHealthSlider;
 
