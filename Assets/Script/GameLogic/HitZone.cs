@@ -73,6 +73,7 @@ public class HitZone : MonoBehaviour
         {
             if (debugLogs) Debug.Log($"<color=red>Miss!</color> {keyToPress}");
             comboTracker?.RegisterMiss();
+            BossAnimController.Instance?.OnPlayerMiss();
             return;
         }
 
@@ -94,7 +95,8 @@ public class HitZone : MonoBehaviour
         if (isPerfect)
             comboTracker?.RegisterPerfectHit();
         else
-            comboTracker?.RegisterHit();
+            Health.Instance?.DamageBoss(20);
+        comboTracker?.RegisterHit();
     }
     public void UpdateKey(Key newKey)
     {

@@ -27,6 +27,7 @@ public class HitZoneComboTracker : MonoBehaviour
         {
             consecutivePerfectHits = 0;
             specialAttack.TriggerSpecial(spawners);
+            CharacterAnimationController.Instance?.TriggerSpecialAttackAnim();
         }
     }
 
@@ -36,4 +37,5 @@ public class HitZoneComboTracker : MonoBehaviour
         consecutiveHits = 0;
         consecutivePerfectHits = 0;
     }
+
 }
