@@ -108,7 +108,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NoteMover
   target: {fileID: 0}
   speed: 5
-  destroyPastDistance: 3
+  destroyPastDistance: 1
 --- !u!54 &1949532212323839679
 Rigidbody:
   m_ObjectHideFlags: 0
