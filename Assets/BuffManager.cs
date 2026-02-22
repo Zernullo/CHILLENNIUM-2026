@@ -11,13 +11,13 @@ public class BuffManager : MonoBehaviour
     [Header("Buff Durations")]
     public float slowDuration = 3f;
     public float damageDuration = 3f;
-    public float healDuration = 10f;
+    public float healDuration = 5f;
     public float missImmunityDuration = 5f;
 
     [Header("Buff Values")]
     public float slowMultiplier = 0.5f;
     public float damageMultiplier = 1.5f;
-    public float healAmount = 1f;
+    public float healAmountPerSecond = 100f;
 
     [Header("Cooldowns")]
     public float slowCooldown = 15f;
@@ -135,7 +135,7 @@ public class BuffManager : MonoBehaviour
         while (elapsed < healDuration)
         {
             elapsed += Time.deltaTime;
-            health.HealPlayer(healAmount * Time.deltaTime);
+            health.HealPlayer(healAmountPerSecond * Time.deltaTime);
             yield return null;
         }
     }
